@@ -1,0 +1,26 @@
+import paramiko
+
+def deploy_to_server(host, user, password, commands):
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(hostname=host, username=user, password=password)
+        
+        for command in commands:
+            print(f"Running: {command}")
+            stdin, stdout, stderr = ssh.exec_command(command)
+            print(stdout.read().decode())
+        
+        ssh.close()
+    except Exception as e:
+        print(f"Error during deployment: {e}")
+
+if __name__ == "__main__":
+    host = "your.server.ip"
+    user = "your_username"
+    password = "your_password"
+    commands = [
+        "git pull origin main",
+        "docker-compose up -d"
+    ]
+    deploy_to_server(host, user, password, commands)
